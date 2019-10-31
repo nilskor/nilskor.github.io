@@ -179,6 +179,7 @@
                     mover.style.transform = `translate( calc( var( --scrollParallax ) * ${direction.xPos}px ), 
                                                         calc( var( --scrollParallax ) * ${direction.yPos}px ) )`
                     mover.style.setProperty( "will-change", 'transform' )
+                    mover.style.setProperty( "overflow", 'true' )
                 })
             }
 
