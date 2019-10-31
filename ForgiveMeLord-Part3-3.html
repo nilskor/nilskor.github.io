@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <meta charset="UTF-8">
+        <title>CodePen - Cheapass Parallax with rAF</title>
+        <!--
+            Getting style information
+
+            The style property is not useful for completely learning about the styles
+            applied on the element, since it represents only the CSS declarations set
+            in the element's inline style attribute, not those that come from style 
+            rules elsewhere, such as style rules in the <head> section, or external 
+            style sheets. To get the values of all CSS properties for an element you
+            should use Window.getComputedStyle() instead.
+        -->
+        <style>
+
+            :root
+            {
+                --navbar-height: 50px;
+                --navbar-colour: #000000;
+                --theme-font: 'Noto Sans', sans-serif;
+            }
+
+            body
+            {
+                padding: 20px;
+                margin: 10px;
+                font-family: var(--theme-font);
+            }
+
+            .fixed-navbar
+            {
+                position: sticky;   /* locks navbar in place and allows rest of page to slide under it */
+                top: 0;             /* places navbar at the very top */
+                width: 100%;        /* navbar is set to full width */
+                height: var(--navbar-height);
+                background-color: var(--navbar-colour);
+                font-size: 15px;
+                z-index: 100;
+            }
+
+            .navbar-container
+            {
+                display: grid;
+                grid-template-columns: 1fr 2fr 1fr;
+                column-gap: 5%;
+                height: var(--navbar-height);
+                background-color: var(--navbar-colour);
+            }
+
+            .generic-box
+            {
+                display: flex;
+                justify-content: space-around;
+            }
+
+            .yin
+            {
+                position: relative;
+            }
+            .yang
+            {
+                position: Absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            .is-blue   { background-color: lightblue!important; }
+            .is-pink   { background-color: pink!important; }
+            .is-green  { background-color: lightgreen!important; }
+            .is-yellow { background-color: lightgoldenrodyellow!important; }
+            .is-grey   { background-color: lightgrey!important; }
+            .is-violet { background-color: violet!important; }
+            .is-wood   { background-color: burlywood!important; }
+            .is-black  { background-color: black!important; }
+            .is-white  { background-color: white!important; }
+
+            button, .logo, a, span
+            {
+                align-self: center;
+            }
+
+            a { text-decoration-line: none; color: white; }
+
+            .container
+            {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                grid-gap: 20px;
+                gap: 20px;
+                font-size: 20px;
+                background-color: white;
+            }
+
+            .is-column1 { text-align: center; grid-column: 1; }
+            .is-column2 { text-align: center; grid-column: 2; }
+            .is-column3 { text-align: center; grid-column: 3; }
+
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <!-- navigation bar "navbar" -->
+        <nav class="fixed-navbar">
+            <div class="navbar-container">
+                <div class="generic-box">
+                    <div class="logo">
+                        <img src="https://www.fillmurray.com/32/32" alt="" width="32px" height="32px" ></img>
+                    </div>
+                </div>
+                <div class="generic-box">
+                    <a id="nbi-1" class="navbar-item" href="">bloss</a>
+                    <a id="nbi-2" class="navbar-item" href="">doco</a>
+                    <a id="nbi-3" class="navbar-item" href="">develop</a>
+                    <a id="nbi-4" class="navbar-item" href="">help</a>
+                </div>
+                <div class="generic-box">
+                    <a href="">search</a>
+                </div>
+            </div>
+        </nav>
+
+        <h1 class="mover" data-speed="0.2" data-angle="179">
+            Weeeeeee! I'm a Parallax'y Thing. Watch me as I move slower than the page!
+        </h1>
+
+        <section>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, 
+            blanditiis rem. Quia, earum nostrum. Accusantium non quod dicta 
+            reiciendis, quibusdam fugit ducimus modi error sed delectus, accusamus, 
+            id odit explicabo!</p>
+            <img src="https://www.fillmurray.com/720/320" class="mover" data-speed="0.4" data-angle="30">
+            
+            <p  class="mover" data-speed="0.6">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, 
+            blanditiis rem. Quia, earum nostrum. Accusantium non quod dicta 
+            reiciendis, quibusdam fugit ducimus modi error sed delectus, accusamus, 
+            id odit explicabo!</p>
+            <img src="https://www.fillmurray.com/710/320">
+            
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, 
+            blanditiis rem. Quia, earum nostrum. Accusantium non quod dicta 
+            reiciendis, quibusdam fugit ducimus modi error sed delectus, accusamus, 
+            id odit explicabo!</p>
+            <img src="https://www.fillmurray.com/720/330">
+            
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, 
+            blanditiis rem. Quia, earum nostrum. Accusantium non quod dicta 
+            reiciendis, quibusdam fugit ducimus modi error sed delectus, accusamus, 
+            id odit explicabo!</p>
+            
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate, 
+            blanditiis rem. Quia, earum nostrum. Accusantium non quod dicta 
+            reiciendis, quibusdam fugit ducimus modi error sed delectus, accusamus, 
+            id odit explicabo!</p>
+        </section>
+
+        <script>
+
+            'use strict';
+
+            const defaultSpeed = 0.2
+            const movers       = document.querySelectorAll('[class^=mover]')
+
+            if ( movers )
+            {
+                let direction = {}
+                Array.prototype.forEach.call( movers, ( mover ) =>
+                {
+                    direction.xPos = 0, direction.yPos = 1
+                    mover.visible = false
+                    mover.dataset.angle ? saneRadians( mover.dataset.angle, direction ) : direction
+                    mover.style.transform = `translate( calc( var( --scrollParallax ) * ${direction.xPos}px ), 
+                                                        calc( var( --scrollParallax ) * ${direction.yPos}px ) )`
+                    mover.style.setProperty( "will-change", 'transform' )
+                })
+            }
+
+            function setScrollParallax()
+            {
+                if ( movers )
+                {
+                    let speed = defaultSpeed
+                    Array.prototype.forEach.call( movers, ( mover ) =>
+                    {
+                        mover.dataset.speed ? speed = mover.dataset.speed : speed = defaultSpeed
+                        mover.style.setProperty( "--scrollParallax", ( document.body.scrollTop || document.documentElement.scrollTop ) * speed )
+                    })
+                }
+                window.requestAnimationFrame( setScrollParallax )
+            }
+
+            function saneRadians( angle, direction )
+            {
+                if ( angle >= 0 && angle <= 180 )
+                {
+                    direction.xPos = Math.cos( ( angle * Math.PI ) / 180 )
+                    direction.yPos = Math.sin( ( angle * Math.PI ) / 180 )
+
+                    return direction
+                }
+            }
+
+
+            window.requestAnimationFrame( setScrollParallax )
+
+        </script>
+
+        <!--
+            Support statement:
+
+                querySelectorAll      : ie8,E12,C01,F3.5,o10,S3.2
+                forEach               : ie9,E12,C01,F1.5,o01,S1.0
+                =>                    : ---,E12,C45,F22.,o32,S10.
+                dataset               : -unknown- , use attributes
+                element.style         : ie1,E12,C45,F1.0,o01,S11.
+                style.transform       : ie9,---,C01,F16.,o15,S3.1
+                .setProperty          : ie8,E12,C01,F1.0,o01,S6.0
+                ternary operator      : ie3,E12,C01,F1.0,o01,S1.0
+                requestAnimationFrame : ieX,E12,C24,F23.,o15,S6.1
+        -->
+
+    </body>
+</html>
+
+
+<!--
+
+                if ( orcaMovers.length > 0 )
+            {
+                var i = 0, direction = {}
+
+                Array.prototype.forEach.call( orcaMovers, () =>
+                {
+                    direction.xPos = 0, direction.yPos = 1
+                    orcaMovers[i].dataset.angle ? saneRadians( orcaMovers[i].dataset.angle, direction ) : direction
+                    orcaMovers[i].style.transform = `translate( calc( var( --scrollparallax ) * ${direction.xPos}px ), calc( var( --scrollparallax ) * ${direction.yPos}px ) )`
+                    orcaMovers[i].style.setProperty( "will-change", 'transform' )
+                    i++
+                })
+            }
+
+            function setScrollParallax()
+            {
+                if ( orcaMovers.length > 0 )
+                {
+                    var i = 0, speed = defaultSpeed
+
+                    Array.prototype.forEach.call( orcaMovers, () =>
+                    {
+                        orcaMovers[i].dataset.speed ? speed = orcaMovers[i].dataset.speed : speed = defaultSpeed
+                        orcaMovers[i].style.setProperty( "--scrollparallax", ( document.body.scrollTop || document.documentElement.scrollTop ) * speed )
+                        i++
+                    })
+                }
+
+                window.requestAnimationFrame( setScrollParallax )
+            }
+
+            function iterateOverTheMovers( callback )
+            {
+                if ( orcaMovers.length > 0 )
+                {
+                    var i = 0
+                    Array.prototype.forEach.call( orcaMovers, () => { callback( orcaMovers[i] ); i++ } )
+                }
+            }
+
+            function setup( moverElement )
+            {
+                    direction.xPos = 0, direction.yPos = 1
+                    moverElement.dataset.angle ? saneRadians( moverElement.dataset.angle, direction ) : direction
+                    moverElement.style.transform = `translate( calc( var( --scrollparallax ) * ${direction.xPos}px ), calc( var( --scrollparallax ) * ${direction.yPos}px ) )`
+                    moverElement.style.setProperty( "will-change", 'transform' )
+            }
+            iterateOverTheMovers( setup )
+
+
+            function updateParallax( moverElement )
+            {
+                moverElement.dataset.speed ? speed = moverElement.dataset.speed : speed = defaultSpeed
+                moverElement.style.setProperty( "--scrollparallax", ( document.body.scrollTop || document.documentElement.scrollTop ) * speed )
+                window.requestAnimationFrame( iterateOverTheMovers( updateParallax ) )
+            }
+            iterateOverTheMovers( updateParallax )
+
+
+-->
