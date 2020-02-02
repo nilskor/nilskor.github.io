@@ -15,11 +15,17 @@
         <style>
             body,h1 {font-family: "Raleway", sans-serif}
             body, html {height: 100%}
-            .bgimg {
-                    background-image: url('aaron-burden-112377-unsplash.jpg');
-                    min-height: 100%;
-                    background-position: center;
-                    background-size: cover;
+            .bgimg
+            {
+                background-image: url('aaron-burden-112377-unsplash.jpg');
+                min-height: 100%;
+                background-position: center;
+                background-size: cover;
+            }
+            @media screen and (min-width: 900px)
+            {
+                h1     {font-size:64px!important}
+                div, p {font-size:18px!important}
             }
         </style>
         
@@ -32,11 +38,11 @@
                 Nilskör presents bloss
             </div>
             <div class="w3-display-middle">
-                <h1 class="w3-jumbo w3-animate-top">bloss 1 Fennec Preview release now available</h1>
+                <h1 class="w3-animate-top w3-center">bloss 1 Fennec Preview release now available</h1>
                 <!-- <hr class="w3-border-grey" style="margin:auto;width:40%"> -->
-                <div class="w3-large w3-center"><a href="" download="https://osdn.net/projects/bloss-os/storage/fennec/bloss-1-fennec-amd64-preview.iso">click here to download</a></div>
+                <div class="w3-center"><a href="https://osdn.net/projects/bloss-os/storage/fennec/bloss-1-fennec-amd64-preview.iso">click here to download (redirect to OSDN)</a></div>
                 <!-- <hr class="w3-border-grey" style="margin:auto;width:40%"> -->
-                <p class="w3-large w3-center">beautiful linux OS  @bloss.io</p>
+                <p class="w3-center">beautiful linux OS  @bloss.io</p>
             </div>
             <div class="w3-display-bottomleft w3-padding-large">
                 enquiries click <a href="mailto:info@bloss.io" target="_blank">here</a>
@@ -49,3 +55,11 @@
     </body>
     
 </html>
+.w3-tiny{font-size:10px!important}
+.w3-small{font-size:12px!important}
+.w3-medium{font-size:15px!important}
+.w3-large{font-size:18px!important}
+.w3-xlarge{font-size:24px!important}
+.w3-xxlarge{font-size:36px!important}
+.w3-xxxlarge{font-size:48px!important}
+.w3-jumbo{font-size:64px!important}
